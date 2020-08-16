@@ -1,0 +1,14 @@
+{
+  "name": "wontonbot",
+  "version": "1.0.0",
+  "description": "bot spawning from boredom",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tzenger",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.3.1"
+  }
+}
