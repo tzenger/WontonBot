@@ -39,7 +39,7 @@ client.on('message', message => {
     // help (prints the help menu txt thingy)
     if(message.content === `${prefix}help`) {
     readfile('help.txt', (err, data)) {
-        if (err) throw err; testing 123
+        if (err) throw err; 
     }
     message.channel.send(data.toString())
     }
