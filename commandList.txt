@@ -1,0 +1,4 @@
+**COMMANDS**
+
+endconvo - the bot will end a conversation allowing you to escape quickly
+fish - blub
