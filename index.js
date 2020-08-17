@@ -11,6 +11,15 @@ const {prefix, token} = require('./config.json')
 
 // create a new Discord client
 const client = new Discord.Client()
+
+function checkAt(msg) {
+    if(msg.indexOf("@") != -1) {
+        return true
+    }
+    return false
+}
+
+//reading help file framework
 var fs = require('fs');
 var commandList = fs.readFileSync('commandList.txt', 'utf8')
 
@@ -25,6 +34,8 @@ client.on('message', message => {
 	console.log(message.content)
 });
 
+
+//listening for any of the messages down below
 client.on('message', message => {
 
     // help (prints the help menu txt thingy)
@@ -34,8 +45,13 @@ client.on('message', message => {
 
     // endconvo (responds to endconvo message with "sounds intriguing, well anyways I gtg see ya")
 	if(message.content === `${prefix}endconvo`) {
+        console.log("no @")
         message.channel.send('Sounds intriguing, but I gtg so see ya!')
     }
+    else if (message.content.includes(`${prefix}endconvo`) && checkAt(message.content)) {
+             message.channel.send('Sounds intriguing ' + message.content.slice(message.content.indexOf('@') - 1, message.content.indexOf('>') + 1) + ', but I gtg so see ya!')
+     }
+    
 
     // fish (blubs))
     if(message.content === `${prefix}fish`) {
