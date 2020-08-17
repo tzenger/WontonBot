@@ -43,6 +43,10 @@ client.on('message', message => {
         message.channel.send('blub')
     }
 
+    // github (sends user link to official WontonBot github)
+    if(message.content === `${prefix}github`) {
+        message.channel.send("https://github.com/tzenger/WontonBot")
+        }
     
 
 });
