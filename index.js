@@ -48,7 +48,7 @@ client.on('message', message => { //listening for any of the messages down below
 
 
 //COMMUNICATION -----------------
-    if(message.content.includes(`${prefix}ping`) && !checkAt(message.content)) { // ping (pings a specified person on the server)
+    if(message.content.includes(`${prefix}ping`) && !checkAt(message.content) && message.content !== `${prefix}ping`) { // ping (pings a specified person on the server)
         txt2User(isolateTrailText(message.content, `${prefix}ping`), message.guild)
         .then(res => { // extracts the user's id and sends it as a tagged message
             let guildMember = res
@@ -65,13 +65,12 @@ client.on('message', message => { //listening for any of the messages down below
     
 //MUSIC ----------------------
 
-       if(message.content === `${prefix}play`) {
-        message.channel.send('I would love to talk to you more about this!')
-    } 
+if(message.content.includes(`${prefix}play`) && !checkAt(message.content)) { // ping (pings a specified person on the server)
+    message.channel.send(`Yo! good song choice! Here it is:
+    https://www.youtube.com/watch?v=jWsx2iqO1ks`)
+}
 
 //FUN ------------------------
-    
-    
 
 	if(message.content === `${prefix}startconvo`) { // startconvo
         message.channel.send('I would love to talk to you more about this!')
@@ -117,6 +116,12 @@ client.on('message', message => { //listening for any of the messages down below
         message.channel.send("https://github.com/tzenger/WontonBot")
         }
     
+
+    if(message.content === `val?`) { // startconvo
+        message.channel.send('yo val sucks ass bro why do u even play it')
+        message.channel.send('i want to die when i play it theres just stupid oppers and all they do is eat butt lol')
+        message.channel.send('literally worst game ever')
+    }
 
 });
 
