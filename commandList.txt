@@ -1,6 +1,10 @@
 **COMMANDS**
+PREFIX: w!
 
-endconvo - the bot will end a conversation (@ compatible)
-startconvo - the bot will start a conversation (@ compatible)
+
+help - brings up this. i don't think you'd need this if you're already hear :/
+ping - pings the specified user (ex. ping wontonbot)
+endconvo - the bot will end a conversation (ex. endconvo wontonbot)
+startconvo - the bot will start a conversation (ex. startconvo wontonbot)
 fish - blub x5
 github - sends a link to the documentation of the bot
