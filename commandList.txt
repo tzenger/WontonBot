@@ -1,8 +1,18 @@
-**COMMANDS**
+>>> **__COMMANDS__**
 PREFIX: w!
 
-
 help - brings up this. i don't think you'd need this if you're already hear :/
+
+**__MUSIC__**
+play - link a youtube video and have it play
+skip - skips the song currently playing
+queue - lets you view the queue of songs
+pause - pauses the player
+resume - resumes the player
+stop - clears the queue and leaves the voice channel
+
+
+**__FUN__**
 ping - pings the specified user (ex. ping wontonbot)
 endconvo - the bot will end a conversation (ex. endconvo wontonbot)
 startconvo - the bot will start a conversation (ex. startconvo wontonbot)

@@ -1,5 +1,6 @@
 // require the discord.js module
 const Discord = require('discord.js')
+const ytdl = require("ytdl-core")
 
 /**
 // require data values stored in the config.json file
@@ -23,9 +24,14 @@ client.once('ready', () => {
 })
 
 // logs any sent message into cmd prompt
-client.on('message', message => {
-	console.log(message.content)
-})
+//client.on('message', message => {
+//	console.log(message.content)
+//})
+
+//VARS --------------------
+var servers = {}
+var joinedMusic = false // boolean describing if the bot is in a voice channel or not
+var currentlyPlaying = "" // keeps track of what is currently playing
 
 //FUNCTIONS FOR CODING ----------------
 
@@ -44,8 +50,11 @@ function txt2User(txt, guild) { // returns promise with the resulting user's dat
     return guild.members.fetch({query: txt, limit: 1})
 }
 
-client.on('message', message => { //listening for any of the messages down below
 
+
+//LISTENER --------------------------
+client.on('message', message => { //listening for any of the messages down below
+//process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
 
 //COMMUNICATION -----------------
     if(message.content.includes(`${prefix}ping`) && !checkAt(message.content) && message.content !== `${prefix}ping`) { // ping (pings a specified person on the server)
@@ -64,11 +73,127 @@ client.on('message', message => { //listening for any of the messages down below
         }
     
 //MUSIC ----------------------
+        
+        let args = message.content.substring(prefix.length).split(" ")
+        switch (args[0]) {
+            case 'play':
 
-if(message.content.includes(`${prefix}play`) && !checkAt(message.content)) { // ping (pings a specified person on the server)
-    message.channel.send(`Yo! good song choice! Here it is:
-    https://www.youtube.com/watch?v=jWsx2iqO1ks`)
-}
+            function play(connection, message) {
+
+                var server = servers[message.guild.id]
+
+                server.dispatcher = connection.play(ytdl(server.queue[0], {filter: 'audioonly'})) // downloads and plays the song from the URL
+                currentlyPlaying = server.queue[0] // sets the currently playing song as the var
+
+                server.queue.shift() // deletes the song currently playing from the queue
+
+                server.dispatcher.on("finish", () => { // once the song is done
+                    if(server.queue[0]) { // if there is another song in the queue
+                        play(connection, message) // play it
+                    }
+                    else { // or else
+                        server.queue = [] // reset the queue
+                        connection.disconnect() // disconnect from the voice channel
+                        joinedMusic = false // set joinedMusic back to false (the bot exited the voice channel)
+                    }
+                })
+            }
+
+                if(!args[1]) {
+                    message.channel.send("You need to provide a link!")
+                    return
+                }
+                
+                if(!message.member.voice.channel) {
+                    message.channel.send("You must be in a voice channel in order to play the bot!")
+                    return
+                }
+
+                if(!servers[message.guild.id]) {
+                    servers[message.guild.id] = { queue: [] }
+                }
+                    
+                
+                var server = servers[message.guild.id]
+
+                if(ytdl.validateURL(args[1]))
+                server.queue.push(args[1])
+                else{
+                    message.channel.send("Please include a valid YouTube URL")
+                    break
+                }
+                
+
+                console.log(server.queue)
+
+                if(!message.member.voice.connection && !joinedMusic) {
+                message.member.voice.channel.join().then(function(connection) { play(connection, message) })
+                joinedMusic = true
+                }
+            break
+
+            case 'skip':
+                var server = servers[message.guild.id]
+                if(server.dispatcher)
+                server.dispatcher.end()
+                message.channel.send('**Song Skipped**')
+                break
+            
+            case 'stop':
+                var server = servers[message.guild.id]
+                console.log(server.queue)
+                if(message.member.voice.connection) {
+                    for(var i = server.queue.length - 1; i <= 0; i--)
+                    server.queue.splice(i, 1)
+                }
+                console.log(server.queue)
+
+                server.dispatcher.end()
+                message.channel.send('**Queue ended and leaving the voice channel**')
+
+                if(!message.member.voice.connection)
+                message.member.voice.channel.leave()
+                joinedMusic = false
+                break;
+
+            case 'pause':
+                var server = servers[message.guild.id]
+                server.dispatcher.pause()
+                message.channel.send("**WontonBot paused**")
+                break
+
+            case 'resume':
+                var server = servers[message.guild.id]
+                server.dispatcher.resume()
+                message.channel.send("**WontonBot resumed**")
+                break
+                
+            case 'queue':
+                var server = servers[message.guild.id]
+                if(server) {
+                var videos = []
+                for(var i = 0; i < server.queue.length; i++) // equivalent of server.queue, but will be turned into promises
+                videos.push(server.queue[i])
+
+                for(var i = 0; i < server.queue.length; i++)
+                    videos[i] = ytdl.getBasicInfo(videos[i]) // turning the URLs into promises for metadata
+                videos.push(ytdl.getBasicInfo(currentlyPlaying)) // appends the currentlyPlaying promise to the videos array
+
+
+                Promise.all(videos) // once all the promises in the array videos are complete
+                .then((result) => { // then
+                    var queueOutput = "> **Queue for " + message.guild.name + "**\n\n__Now Playing__\n" + result[server.queue.length].videoDetails.title + "\n\n__In Queue__\n"
+
+                    for(var i = 0; i < server.queue.length; i++)
+                        queueOutput = queueOutput + (i + 1) + ". " + result[i].videoDetails.title + "\n"; // adding the titles to the queueOutput
+                        message.channel.send(queueOutput) // sending out the message
+                    })
+                }
+                else
+                message.channel.send("Queue is empty")
+                break
+              
+        }
 
 //FUN ------------------------
 
